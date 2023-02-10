@@ -1,3 +1,4 @@
+<body>
 <div class="container position-sticky z-index-sticky top-0">
     <div class="row">
         <div class="col-12">
@@ -19,28 +20,35 @@
                     <div class="col-xl-4 col-lg-5 col-md-7 d-flex flex-column ms-auto me-auto ms-lg-auto me-lg-5">
                         <div class="card card-plain">
                             <div class="card-header">
-                                <?= $this->Flash->render() ?>
+                                <?= $this->Flash->render()  ?>
                                 <h4 class="font-weight-bolder">Sign Up</h4>
                                 <p class="mb-0">Enter your email and password to register</p>
                             </div>
                             <div class="card-body">
                                 <?= $this->Form->create($user, ['id' => 'regform']) ?>
                                 <fieldset>
+                                    <?= $this->Form->error('name')  ?>
+                                    <label id="name-error" class="error" for="name"></label>
                                     <div class="input-group input-group-outline mb-3">
                                         <label class="form-label">Name</label>
                                         <?= $this->Form->input('name', ['required' => 'false', 'type' => 'text', 'class' => 'form-control']) ?>
                                     </div>
+                                    <?= $this->Form->error('email')  ?>
+                                    <label id="email-error" class="error" for="email"></label>
                                     <div class="input-group input-group-outline mb-3">
                                         <label class="form-label">Email</label>
                                         <?= $this->Form->input('email', ['required' => 'false', 'label' => false, 'type' => 'email', 'id' => 'email', 'class' => 'form-control', "data-validity-message" => "Please enter your email", "oninvalid" => "this.setCustomValidity(''); if (!this.value) this.setCustomValidity(this.dataset.validityMessage)", "oninput" => "this.setCustomValidity('')", "aria-required" => "true"]) ?>
                                         <div class="error-message" id="email-error"></div>
                                     </div>
+                                    <?= $this->Form->error('password')  ?>
+                                    <label id="password-error" class="error" for="password"></label>
                                     <div class="input-group input-group-outline mb-3">
                                         <label class="form-label">Password</label>
                                         <?= $this->Form->input('password', ['required' => 'false', 'type' => 'password', 'id' => 'password', 'class' => 'form-control']) ?>
                                     </div>
+                                    <label id="checkbox-error" class="error" for="checkbox"></label>
                                     <div class="form-check form-check-info text-start ps-0">
-                                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked>
+                                        <input class="form-check-input" type="checkbox" name="checkbox" value="" id="flexCheckDefault" checked>
                                         <label class="form-check-label" for="flexCheckDefault">
                                             I agree the <a href="javascript:;" class="text-dark font-weight-bolder">Terms and Conditions</a>
                                         </label>
@@ -64,21 +72,4 @@
         </div>
     </section>
 </main>
-<!--   Core JS Files   -->
-<script src="/assets/js/core/popper.min.js"></script>
-<script src="/assets/js/core/bootstrap.min.js"></script>
-<script src="/assets/js/plugins/perfect-scrollbar.min.js"></script>
-<script src="/assets/js/plugins/smooth-scrollbar.min.js"></script>
-<script>
-    var win = navigator.platform.indexOf('Win') > -1;
-    if (win && document.querySelector('#sidenav-scrollbar')) {
-        var options = {
-            damping: '0.5'
-        }
-        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
-    }
-</script>
-<!-- Github buttons -->
-<script async defer src="https://buttons.github.io/buttons.js"></script>
-<!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
-<script src="/assets/js/material-dashboard.min.js?v=3.0.4"></script>
+</body>

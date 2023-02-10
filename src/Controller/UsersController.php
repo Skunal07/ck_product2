@@ -22,6 +22,8 @@ class UsersController extends AppController
 
     public function initialize(): void
     {
+        $this->loadComponent('Authentication.Authentication');
+
         $this->viewBuilder()->setLayout('userlayout');
         $this->loadComponent('Flash');
     }
@@ -38,6 +40,10 @@ class UsersController extends AppController
     //     }
     // }
 
+    public function dashboard()
+    {
+        
+    }
     public function signup()
     {
         
@@ -51,30 +57,65 @@ class UsersController extends AppController
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('The user has been saved.'));
 
-                return $this->redirect(['action' => 'signup']);
+                return $this->redirect(['action' => 'signin']);
             }
             $this->Flash->error(__('The user could not be saved. Please, try again.'));
         }
         $this->set(compact('user'));
     }
+    // public function signin()
+    // {
+        
+    //     $user = $this->Users->newEmptyEntity();
+    //     if ($this->request->is('post')) {
+    //         // $data = $this->request->getData();
+    //         $user = $this->Users->patchEntity($user, $this->request->getData());
+    //         // echo '<pre>';
+    //         // print_r($user);
+    //         // die;
+    //         if ($this->Users->save($user)) {
+    //             $this->Flash->success(__('The user has been saved.'));
+
+    //             return $this->redirect(['action' => 'signup']);
+    //         }
+    //         $this->Flash->error(__('The user could not be saved. Please, try again.'));
+    //     }
+    //     $this->set(compact('user'));
+    // }
+    public function beforeFilter(\Cake\Event\EventInterface $event)
+    {
+        parent::beforeFilter($event);
+        // Configure the login action to not require authentication, preventing
+        // the infinite redirect loop issue
+        $this->Authentication->addUnauthenticatedActions(['signin','signup']);
+    }
+    
     public function signin()
     {
-        
-        $user = $this->Users->newEmptyEntity();
-        if ($this->request->is('post')) {
-            // $data = $this->request->getData();
-            $user = $this->Users->patchEntity($user, $this->request->getData());
-            // echo '<pre>';
-            // print_r($user);
-            // die;
-            if ($this->Users->save($user)) {
-                $this->Flash->success(__('The user has been saved.'));
-
-                return $this->redirect(['action' => 'signup']);
-            }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
+        $this->request->allowMethod(['get', 'post']);
+        $result = $this->Authentication->getResult();
+        // regardless of POST or GET, redirect if user is logged in
+        if ($result && $result->isValid()) {
+            // redirect to /articles after login success
+            $redirect = $this->request->getQuery('redirect', [
+                'controller' => 'Users',
+                'action' => 'signup',
+            ]);
+            $this->Flash->success(__('Login successfully'));
+            return $this->redirect($redirect);
         }
-        $this->set(compact('user'));
+        // display error if user submitted and authentication failed
+        if ($this->request->is('post') && !$result->isValid()) {
+            $this->Flash->error(__('Invalid username or password'));
+        }
     }
-
+    public function logout()
+    {
+        $result = $this->Authentication->getResult();
+        // regardless of POST or GET, redirect if user is logged in
+        if ($result && $result->isValid()) {
+            $this->Authentication->logout();
+            return $this->redirect(['controller' => 'Users', 'action' => 'signin']);
+        }
+    }
 }
